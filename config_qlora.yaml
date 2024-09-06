@@ -1,0 +1,46 @@
+defaults:
+  - paths: paths
+
+paths:
+  cache_dir: /net/tscratch/people/plgmaciejstranz/cache
+  data_file: /net/tscratch/people/plgmaciejstranz/all-data.csv
+  output_dir: trained_weights_qlora
+  logs_dir: ./logs
+
+training:
+  num_train_epochs: 5
+  per_device_train_batch_size: 1
+  gradient_accumulation_steps: 8
+  save_steps: 0
+  logging_steps: 25
+  learning_rate: 2e-4
+  weight_decay: 0.001
+  fp16: true
+  bf16: false
+  max_grad_norm: 0.3
+  max_steps: -1
+  warmup_ratio: 0.03
+  group_by_length: true
+  lr_scheduler_type: cosine
+  report_to: tensorboard
+  evaluation_strategy: epoch
+
+model:
+  name: NousResearch/Llama-2-7b-hf
+  tokenizer: TinyLlama/TinyLlama-1.1B-intermediate-step-1431k-3T
+
+lora:
+  lora_alpha: 16
+  lora_dropout: 0.1
+  r: 64
+  bias: none
+  target_modules: all-linear
+  task_type: CAUSAL_LM
+
+bnb:
+  load_in_4bit: true
+  bnb_4bit_quant_type: nf4
+  bnb_4bit_compute_dtype: float16
+  bnb_4bit_use_double_quant: true
+
+cuda_devices: "1,2,3"
